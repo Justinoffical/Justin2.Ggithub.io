@@ -19,6 +19,11 @@ var snakeBody = [];
 var foodX;
 var foodY;
 
+var score = 0;
+
+const eatsound = new Audio("mp3/eat.mp3")
+const music = new Audio("mp3/RPG.mp3")
+
 var gameOver = false;
 
 window.onload = function() {
@@ -29,10 +34,10 @@ window.onload = function() {
 
     placeFood();
     document.addEventListener("keyup",changeDirection);
+    drawScore();
     // update();
     setInterval(update, 1000/10); //100 milliseconds
 }
-
 function update() {
     if (gameOver) {
         return;
@@ -42,8 +47,17 @@ function update() {
     context.fillRect(0, 0, board.width, board.height);
 
     context.fillStyle="red"
-    context.fillRect(foodX, foodY, blockSize, blockSize)
+    context.fillRect(foodX, foodY, blockSize, blockSize);
 
+    context.fillStyle= "white"
+    context.font = "15px Verdana"
+    context.fillText("score " + score,420,17, board.width, board.height)
+//score and sound
+    if (snakeX == foodX && snakeY == foodY) {
+        score++;
+        eatsound.play();
+    }
+//if eat food grown longer
     if (snakeX == foodX && snakeY == foodY) {
         snakeBody.push([foodX, foodY])
         placeFood();
@@ -67,13 +81,22 @@ function update() {
     //game over conditions
     if (snakeX < 0 || snakeX > cols*blockSize || snakeY < 0 || snakeY > rows*blockSize) {
         gameOver = true;
-        alert("Game Over");
+        if (gameOver) {
+        context.fillStyle= "blue"
+        context.font = "50px Verdana"
+        context.fillText("GameOver!",110,250, board.width, board.height)
+        }
+    
     }
 
     for (let i = 0; i < snakeBody.length; i++) {
         if (snakeX == snakeBody[i][0] && snakeY == snakeBody[i][1]) {
             gameOver = true;
-            alert("Game Over");
+            if (gameOver) {
+            context.fillStyle= "bule"
+            context.font = "50px Verdana"
+            context.fillText("GameOver!",110,250, board.width, board.height)
+            }
         }
     }
 }
@@ -82,19 +105,22 @@ function changeDirection(e) {
     if (e.code == "ArrowUp" && velocityY != 1) {
         velocityX = 0;
         velocityY = -1;
+        music.play();
     }
     else if (e.code == "ArrowDown" && velocityY !=- 1) {
         velocityX = 0;
         velocityY = 1;
+        music.play();
     }    
     else if (e.code == "ArrowLeft" && velocityX != 1) {
         velocityX = -1;
         velocityY = 0;
+        music.play();
     }
     if (e.code == "ArrowRight" && velocityX !=- 1) {
         velocityX = 1;
         velocityY = 0;        
-
+        music.play();
     }
 }
 
@@ -102,4 +128,8 @@ function placeFood() {
     //0-1) *cols -> (0-19.9999) -> (0-19) * 25
     foodX = Math.floor(Math.random() * cols) * blockSize;
     foodY = Math.floor(Math.random() * rows) * blockSize;
+}
+
+// score 
+function drawScore() {
 }
